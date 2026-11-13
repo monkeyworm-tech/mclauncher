@@ -328,7 +328,8 @@ body {
 .quick-btn:hover { border-color: #5a5754; color: #fff; }
 
 .player-chip { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-.player-chip .pc-name { font-size: 13px; color: #c9c7c4; }
+.player-chip .pc-name { font-size: 13px; color: #c9c7c4; cursor: pointer; transition: color 150ms ease; }
+.player-chip .pc-name:hover { color: #fff; }
 .copy-btn { padding: 6px; color: #bbb4b1; transition: color 150ms ease; }
 .copy-btn:hover { color: #fff; }
 
@@ -487,6 +488,12 @@ body {
 .modal-cancel { height: 36px; width: 96px; font-size: 14px; font-weight: 700; }
 .modal-install { height: 36px; width: 104px; font-size: 14px; font-weight: 700; }
 
+/* ================= username dialog ================= */
+.username-modal { background: rgba(0, 0, 0, 0.6); align-items: center; justify-content: center; z-index: 70; }
+.username-modal .um-card { width: 380px; max-width: calc(100vw - 48px); background: #262524; border: 2px solid #454340; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55); padding: 24px 24px 20px; }
+.username-modal .um-card h2 { font-size: 18px; font-weight: 700; color: #f0f0f0; margin-bottom: 16px; text-align: center; }
+.username-modal .um-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+
 /* ================= toasts ================= */
 .toast-viewport { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; flex-direction: column-reverse; max-height: 100vh; padding: 16px; pointer-events: none; }
 @media (min-width: 640px) { .toast-viewport { top: auto; bottom: 0; left: auto; right: 0; width: auto; flex-direction: column; } }
@@ -523,10 +530,10 @@ body {
 <body>
 <div id="app">
   <aside class="sidebar" id="sidebar" aria-label="Launcher navigation">
-    <button type="button" class="side-account">
+    <button type="button" class="side-account" id="accountBtn" title="Change username">
       <img class="mc-pixel" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAYAAAA5ZDbSAAAInUlEQVR4nO2dy48UdRDHt+fZM7Mz+wAiaEzEo9EDifg6YPAknIQIeMOQEBMTNUYTNfGAxmjAmHiQo7qJEhE06EE8qYkaATn4BygSFUXCwLLz3nl6MKn6tukK3Uz3PMr6nCqzv/1tT9f+vlNTXb9fOZvuunMwY6glMe4LMOLFHKwcc7ByzMHKMQcrJzXuCwhKp9Mmu9Vqkr262uIxbR7T7XXJ7vf7vnMmEvz/nUryrUhnMmRnsy7ZrpvjMWkeM8nYClaOOVg5EyfR9VqF7Fq9Snar1fIbPhQo3e0+y3sbPg7q9Zrv77ouS/dsoUh2YbYU5SUOja1g5ZiDlTM2iW406mSvXLtKNsrjJIMfGWhXKitkz80vkp3PF0ZzYf/BVrByzMHKGalEVyssxcvXluEnDlm5TJJfnpYHmXz5My1ItpTLl8hemJ8nu1hi6Y4bW8HKMQcrJxaJLubSZO/aeivZG9bcQfZTh06SnU/zZbz52D1kd3v+OeSJAGS52+fPkueOnCG7kOd89dvPbiX7/EVO4Bz/5g+yq81O1FdpK1g75mDlRCbRKMt7H95ItpthLWu0+BFeyWX5ykPknE7yeMeZjv8/x2GJLuX5PuRcvr31JkfXi0W4V9tuJ3vp5Dmya3CvhmE67qBxw5iDleNEVRe9bztLDUrQ4wdOkJ0HWX5//xaysyn+P2tPcuQcgAy8lyvVVbL3v/sd2UmHP4Y+fG0n2T9f4EelR7/m6HoYbAUrxxysnKGiaMwtYxIDo2WU5XyW/1yrw2MGA8g/Tzmtdo9s/LgpuPyxlQCJ7kGS5KaFLNlXypfJXrN23Q1fj61g5ZiDlRM6isZKjHL5b7IzaZZZTGK8setuslGWv/iJo8SuULc87eQgx759E+fkB3DHXzh2luzVTs/XXrduPdlhK0NsBSvHHKyc0FE0FsjhMzN85JcHucYkBkbLKMuY28C8tAQEnjPNtn/OFiN2x3eEPA8EuTO5zPXnwc+4xipsmUnxT1y4J/h38V7hakOJxntuEm14MAcrJ5BE43YSrFvGArlDezaTnU6Gyy2jLO++j3PavYF/gN8EGTx2+jzZCdDQnZtv49cT/uLa6fC1HfnhF7KzSb6eHTBPUpinD5p79NQ53zH4Tgbwvg7u4QqW5Qbnrp/+4BTZnq004Isg22RsBSvHHKycQBKNu/w8gO5ggRxGoY4jxZ7+oCyj9HnGCK+HHdMf4MeHJL/wvoT1IF1nEPDbRLd3/XnQFybRhjlYO6JEe8/EiH7ztXFjoC/QR9KZIbaClWMOVo4o0XhUUdx4csKQxJAi4SbkaSUwt5wQIvkORv7CVsYGVGgkHYi6YUpPFD3CHZHoI5Po/ynmYOWIEo0nyMUNyinmloOA6ovqeOLsbyHn4YlQuj8LPQ/bWXlYJKCPisU53zG2gpVjDlaOnOhoj+c4I+GJnIgUtEY1jyevHvJ34yaIj2wFK8ccrBxRovG85bjBAjmsxBATHRB1Y7SMsrznfq4MkR5ZYrR8/PSvZGdSXNERpDKkD484P/0x3LeAYQjiI1vByjEHK0eUaOkY/DhA4ZNkEJFyy545YYxcLMf2QIiR4dR/cR5nTDtvgvjIVrByzMHKMQcrxxysHHOwcsQoGptGxR1RYz4Dt5N465ZhTIDtMDhGuvw21CFLFR04JtX3ryQJUM4cC+gjccwIrsMYI+Zg5YgSjb38sGlUHGBuGXf5SQ/oUE4xoYFKibllKYkhzYPy/glUmARRYsyFZGNumIA+krAVrBxzsHLENY4tVuNuVuUpVEuGO/VOiqjxkd9w84RbA0Ei/KhAH0nYClaOOVg5okRj52upxWpU4FFFeCaGlGDB7SRYt4xS763E8P+7mMTAaBll2XtGh/88mKgZZUUH+kjCVrByzMHKESXadXMjuwhMQ2DVhHQmRjLhL91SZYhUiYG5ZSmJkfRUdPhfjzPEGR3DEMRHtoKVYw5WjpzogA3FrsvRmnheR8itImHBXLET9x+bYNAX0qZvxFawcszBygn0QGu2UCTbI9GglNjsCSsNBsKBohIovt4T8/xtcZ4g4wNsHcSPA2mekIf5/ed3rz8/gr4Igq1g5ZiDlRO668rFv7hbSqfLjxHzkE+eg87XB3fzOdItOP7o2BmuuOhBThi7t3iyD3gWB8h+u+uf9MgGeFyI07e7fG2olEEeO0rzFKCk49F7ueUu5kWe/4g7huP9wdYAGYiWN9zM3VuCYCtYOeZg5YQuC5ubXyS7XL5EtgNJ2z6Eg9VWh2yUU5S+HnTQFpPC8DpGtkGkWAKlOI55UnBP8D54vlhAl3Mn4f/m8Z6HxVawcszBygkt0diYaWF+nuy3nnmQ7AbI0b5XPuffhRarh/c+QHY2rfP/7GqNv2U88d73ZONjx6UDj5CN9+2lwzw+bDMsROedNQhzsHKG2lxRLHF09/slbju7WGQp7kGdcA+K6LDKAvPY3TFVR0QFRs5YDYJdaTCKxqTNhcsNsofp+o3YClaOOVg5oXPREsUcy/LebRvhdUhogES//M5XZGOL1dehY/i0yDVe54sfc0fvHHxrePXJh3g8yHW1yfbSSe57WGtFc9KgrWDlmIOVE9kW5WqTv6QvfcnbN3ZsuYXs9YtcMIaPwwYgcQ3YDN4Z1+EXAcDqC5TcOryvmSRWa7B9oczdUk58+yfZUckyYitYOeZg5UQWRQdheblMdqWy4jtG2mYyLUhnXJdK3BVlYWHtqC7HVrB2zMHKifmgHy8oTdks74xbuXaV7LjPA4kbLJDDSoxhHvkNg61g5ZiDlTNSiUZQstCu1ypk1+pVsietCznu8sPtJIXZ0jguR8RWsHLMwcoZm0RLoMSh3YHoGjtfY4tV7OWHTaOk45hwFyQe7IknyOFRRXgmRpDN15OArWDlmIOVM3ESLYGSiLbU+dr4F1vByjEHK8ccrBxzsHLMwcr5BzjmypAu/8ZzAAAAAElFTkSuQmCC" alt="Account avatar" draggable="false">
       <span class="sa-text">
-        <span class="sa-name">CoolGame Pat</span>
+        <span class="sa-name" id="saName">Player</span>
         <span class="sa-sub">Microsoft account</span>
       </span>
       <svg class="sa-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
@@ -653,6 +660,19 @@ body {
   </div>
 </div>
 
+<!-- ============ Change username dialog ============ -->
+<div class="modal username-modal" id="usernameModal" role="dialog" aria-modal="true" aria-label="Change username" hidden>
+  <div class="um-card">
+    <h2>Change username</h2>
+    <label class="field-label" for="uName">Username</label>
+    <input class="m-input" id="uName" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="Player">
+    <div class="um-actions">
+      <button type="button" class="mc-btn-stone modal-cancel" id="uCancel">Cancel</button>
+      <button type="button" class="mc-btn-green mc-shadow modal-install" id="uSave">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-viewport" id="toastViewport"></div>
 
 <script>
@@ -712,7 +732,19 @@ function warnBadge(size) {
 const VERSIONS = [
   { id: 'latest-release', label: 'Latest release (26.3)', version: '26.3', html: '26-3.html' },
   { id: 'release-26-2', label: 'release 26.2', version: '26.2', html: '26-2.html' },
+  { id: 'release-1-21-11', label: 'release 1.21.11', version: '1.21.11', html: '21-11.html' },
   { id: 'release-1-20-6', label: 'release 1.20.6', version: '1.20.6', html: '20-6.html', old: true },
+  { id: 'release-1-16-5', label: 'release 1.16.5', version: '1.16.5', html: '16-5.html', old: true },
+  { id: 'release-1-12-2', label: 'release 1.12.2', version: '1.12.2', html: '12-2.html', old: true },
+  { id: 'release-1-8-8', label: 'release 1.8.8', version: '1.8.8', html: '8-8.html', old: true },
+  { id: 'release-1-7-10', label: 'release 1.7.10', version: '1.7.10', html: '7-10.html', old: true },
+  { id: 'release-1-6-4', label: 'release 1.6.4', version: '1.6.4', html: '6-4.html', old: true },
+  { id: 'release-1-5-2', label: 'release 1.5.2', version: '1.5.2', html: '5-2.html', old: true },
+  { id: 'release-1-4-7', label: 'release 1.4.7', version: '1.4.7', html: '4-7.html', old: true },
+  { id: 'release-1-3-2', label: 'release 1.3.2', version: '1.3.2', html: '3-2.html', old: true },
+  { id: 'release-1-2-5', label: 'release 1.2.5', version: '1.2.5', html: '2-5.html', old: true },
+  { id: 'release-1-1', label: 'release 1.1', version: '1.1', html: '1.html', old: true },
+  { id: 'release-1', label: 'release 1', version: '1', html: '0.html', old: true },
 ];
 function getVersion(id) { return VERSIONS.find(v => v.id === id) || VERSIONS[0]; }
 
@@ -726,8 +758,6 @@ function iconSrc(id) { const i = INSTALL_ICONS.find(x => x.id === id); return i 
 function defaultInstallations() {
   return [
     { id: 'inst-latest-release', name: 'Latest release', versionId: 'latest-release', icon: 'grass', createdAt: 1735689600000, lastPlayed: 1762521600000 },
-    { id: 'inst-release-26-2', name: 'release 26.2', versionId: 'release-26-2', icon: 'furnace', createdAt: 1732924800000 },
-    { id: 'inst-release-1-20-6', name: 'release 1.20.6', versionId: 'release-1-20-6', icon: 'crafting', createdAt: 1717459200000 },
   ];
 }
 
@@ -803,13 +833,16 @@ function toast(title, description) {
 
 /* ================= state (zustand-persist compatible) ================= */
 const LS_KEY = 'minecraft-launcher-state';
+const LS_VERSION = 1;
 let state = {
   installations: defaultInstallations(),
   selectedId: 'inst-latest-release',
   activeTab: 'play',
   activeGame: 'java',
+  username: 'Player',
 };
 function loadState() {
+  let storedVersion = 0;
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) {
@@ -820,9 +853,15 @@ function loadState() {
         if (typeof s.selectedId === 'string') state.selectedId = s.selectedId;
         if (typeof s.activeTab === 'string') state.activeTab = s.activeTab;
         if (typeof s.activeGame === 'string') state.activeGame = s.activeGame;
+        if (typeof s.username === 'string' && s.username.trim()) state.username = s.username.trim();
       }
+      if (parsed && typeof parsed.version === 'number') storedVersion = parsed.version;
     }
   } catch (e) { /* storage unavailable */ }
+  // migrate v0 -> v1: drop the old pre-added defaults (release 26.2 / release 1.20.6), keep player-created ones
+  if (storedVersion < 1) {
+    state.installations = state.installations.filter(i => i && i.id !== 'inst-release-26-2' && i.id !== 'inst-release-1-20-6');
+  }
   // validate
   const validIcons = INSTALL_ICONS.map(i => i.id);
   if (!Array.isArray(state.installations)) state.installations = [];
@@ -841,8 +880,9 @@ function persist() {
         selectedId: state.selectedId,
         activeTab: state.activeTab,
         activeGame: state.activeGame,
+        username: state.username,
       },
-      version: 0,
+      version: LS_VERSION,
     }));
   } catch (e) { /* storage unavailable */ }
 }
@@ -985,7 +1025,7 @@ function buildPlayView() {
         '<button type="button" class="quick-btn" aria-label="More play options" title="More options">' + ic('moreVertical', 20) + '</button>' +
       '</div>' +
       '<div class="player-chip">' +
-        '<span class="pc-name">CoolGamePat</span>' +
+        '<span class="pc-name" id="pcName" title="Change username">' + esc(state.username) + '</span>' +
         '<button type="button" class="copy-btn" aria-label="Copy player name" title="Copy player name">' + ic('copy', 16) + '</button>' +
       '</div>' +
     '</div>' +
@@ -1004,12 +1044,13 @@ function buildPlayView() {
   const quick = $$('.quick-btn', wrap);
   quick[0].addEventListener('click', () => toast('Installations', 'Manage your installations in the Installations tab.'));
   quick[1].addEventListener('click', () => toast('Launcher options', 'v.3.43.21-2.6.2 \u2014 everything is up to date.'));
+  $('#pcName', wrap).addEventListener('click', openUsernameModal);
   $('.copy-btn', wrap).addEventListener('click', () => {
     try {
-      const p = navigator.clipboard && navigator.clipboard.writeText('CoolGamePat');
+      const p = navigator.clipboard && navigator.clipboard.writeText(state.username);
       if (p && p.catch) p.catch(() => undefined);
     } catch (e) { /* clipboard unavailable */ }
-    toast('Player name copied', 'CoolGamePat');
+    toast('Player name copied', state.username);
   });
   $('#playBtn', wrap).addEventListener('click', () => {
     const sel = selectedInstallation();
@@ -1384,12 +1425,46 @@ function wireModal() {
   });
 }
 
+/* ================= username dialog ================= */
+function applyUsername() {
+  const sa = $('#saName');
+  if (sa) sa.textContent = state.username;
+  const pc = $('#pcName');
+  if (pc) pc.textContent = state.username;
+}
+function openUsernameModal() {
+  $('#uName').value = state.username;
+  $('#usernameModal').hidden = false;
+  setTimeout(() => { const inp = $('#uName'); inp.focus(); inp.select(); }, 60);
+}
+function closeUsernameModal() { $('#usernameModal').hidden = true; }
+function saveUsername() {
+  const name = $('#uName').value.trim().slice(0, 24) || 'Player';
+  state.username = name;
+  persist();
+  applyUsername();
+  closeUsernameModal();
+  toast('Username changed', 'Your new username is \u201C' + name + '\u201D.');
+}
+function wireUsernameModal() {
+  $('#accountBtn').addEventListener('click', openUsernameModal);
+  $('#uCancel').addEventListener('click', closeUsernameModal);
+  $('#uSave').addEventListener('click', saveUsername);
+  $('#uName').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); saveUsername(); }
+  });
+  $('#usernameModal').addEventListener('mousedown', e => {
+    if (e.target === $('#usernameModal')) closeUsernameModal();
+  });
+}
+
 /* ================= global listeners ================= */
 document.addEventListener('mousedown', e => {
   $$('.drop.open').forEach(d => { if (!d.contains(e.target)) d.classList.remove('open'); });
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
+    if (!$('#usernameModal').hidden) { closeUsernameModal(); return; }
     if (!$('#createModal').hidden) { closeModal(); return; }
     closeAllDrops();
   }
@@ -1401,6 +1476,8 @@ renderSidebar();
 renderHeader();
 renderMain();
 wireModal();
+wireUsernameModal();
+applyUsername();
 $('#mobileOverlay').addEventListener('click', closeMobile);
 $('#sideClose').addEventListener('click', closeMobile);
 })();
